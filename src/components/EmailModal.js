@@ -1,35 +1,89 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Modal, Button } from 'react-bootstrap';
+import axios from 'axios';
+import { TokenContext } from '../context/TokenProvider';
+import '../index.css';
+
 function EmailModal() {
   const [show, setShow] = useState(false);
+  const { token } = useContext(TokenContext);
+  const [email, setEmail] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const handleClose = () => setShow(false);
+  const handleClose = () => {
+    setShow(false);
+    setErrorMessage('');
+  };
+
   const handleShow = () => setShow(true);
+
+  const handleSubmit = async () => {
+    try {
+      const response = await axios.post(
+        'https://api.blog.redberryinternship.ge/api/login',
+        JSON.stringify({ email }),
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      console.log('Responseeee:', response);
+      //   handleClose();
+    } catch (error) {
+      if (
+        error.response &&
+        error.response.data &&
+        error.response.data.message
+      ) {
+        setErrorMessage('ელ-ფოსტა არ მოიძებნა');
+      } else {
+        setErrorMessage('An error occurred while processing your request.');
+      }
+    }
+  };
+
   return (
-    <div>
+    <>
       <Button className="btn btn-primary" onClick={handleShow}>
-        შესვლა{' '}
+        შესვლა
       </Button>
 
-      <Modal show={show} onClick={handleClose}>
-        <Modal.Header closeButton></Modal.Header>
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton className="border-0"></Modal.Header>
         <Modal.Body>
-          <h6 className="font-weight-bold fs-3">შესვლა</h6>
-          <form className="w-100vw rounded-3  ">
-            <label>ელ-ფოსტა</label>
+          <h6 className="font modalTitle">შესვლა</h6>
+          <form className="w-100vw rounded-3">
+            <label className="font text-dark font-size-14 font-weight-medium font-style-normal">
+              ელ-ფოსტა
+            </label>
             <input
               type="email"
-              className="form-control bg-light mt-2 w-100% "
+              className="form-control  mt-2 w-100%"
               id="email"
               placeholder="Example@redberry.ge"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              style={{
+                border: errorMessage
+                  ? '1px solid #EA1919'
+                  : '1px solid #CED4DA',
+                background: errorMessage ? '#FAF2F3' : '#FFFFFF',
+              }}
             />
+            {errorMessage && (
+              <div className="text-danger mt-2">{errorMessage}</div>
+            )}
           </form>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="primary">შესვლა</Button>
+        <Modal.Footer className="pb-5">
+          <Button variant="primary" className="w-100" onClick={handleSubmit}>
+            შესვლა
+          </Button>
         </Modal.Footer>
       </Modal>
-    </div>
+    </>
   );
 }
 
