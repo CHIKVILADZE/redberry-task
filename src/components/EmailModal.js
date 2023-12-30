@@ -73,7 +73,10 @@ function EmailModal() {
               }}
             />
             {errorMessage && (
-              <div className="text-danger mt-2">{errorMessage}</div>
+              <div className="text-danger mt-2">
+                <img src="/assets/errorIcon.png" alt="error icon" />{' '}
+                {errorMessage}
+              </div>
             )}
           </form>
         </Modal.Body>

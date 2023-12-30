@@ -1,3 +1,9 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'FiraGO', 'sans-serif';
+}
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -12,13 +18,69 @@ code {
     monospace;
 }
 
-.font {
-  font-family: 'FiraGO', 'sans-serif';
-}
-
 .modalTitle {
   text-align: center;
   margin-top: -20px;
   font-size: 24px;
   font-weight: 700;
+}
+
+.swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-slide {
+  text-align: center;
+  font-size: 18px;
+  background: #fff;
+  border: 1px solid red;
+  width: auto;
+  /* Center slide text vertically */
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+.author,
+.title,
+.date,
+.category,
+.email {
+  width: 288px;
+  height: 44px;
+  background: #fcfcfd;
+  margin-bottom: 10px;
+}
+
+.validate {
+  color: #85858d;
+  font-family: FiraGO;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+/* Remove the default calendar icon and add a custom background */
+input[type='date']::-webkit-calendar-picker-indicator {
+  display: none;
+}
+
+input[type='date'] {
+  /* Add your custom background */
+  background-image: url('../public/assets/calendar.png');
+  background-repeat: no-repeat;
+  background-position: 10px center; /* Adjust the position here */
+  padding-left: 35px; /* To leave space for the icon */
+  /* Adjust as needed */
+  border: 1px solid #ccc; /* Your border style */
+  border-radius: 4px; /* Your border-radius */
+  color: #85858d;
 }

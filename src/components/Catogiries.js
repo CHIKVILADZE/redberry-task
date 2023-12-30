@@ -1,7 +1,10 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import '../index.css';
 
-function Catogiries() {
+function CategoriesWithSwiper() {
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
@@ -10,9 +13,8 @@ function Catogiries() {
         const response = await axios.get(
           'https://api.blog.redberryinternship.ge/api/categories'
         );
-        const categoriesData = response.data.data; // Access response.data.data
+        const categoriesData = response.data.data;
 
-        // Ensure categoriesData is an array before setting the state
         if (Array.isArray(categoriesData)) {
           setCategories(categoriesData);
         } else {
@@ -26,25 +28,36 @@ function Catogiries() {
     getCategories();
   }, []);
 
+  console.log('Categors', categories);
+
   return (
-    <div className="d-flex flex-wrap gap-3">
-      {categories.map((category) => (
-        <button
-          key={category.id}
-          style={{
-            color: category.background_color, // Set text color same as background_color
-            backgroundColor: `${category.background_color}33`, // Add alpha for opacity to background_color
-            border: 'none',
-            borderRadius: 30,
-            padding: '8px 16px',
-            cursor: 'pointer',
-          }}
-        >
-          {category.title}
-        </button>
-      ))}
+    <div className="border border-primary" style={{ width: '90%' }}>
+      <Swiper
+        spaceBetween={10}
+        slidesPerView={6}
+        className="w-70 border border-primary"
+      >
+        {categories.map((category) => (
+          <SwiperSlide key={category.id}>
+            <div
+              style={{
+                width: '90%',
+                color: category.background_color,
+                backgroundColor: `${category.background_color}33`,
+                border: 'none',
+                borderRadius: 30,
+                padding: '8px 16px',
+
+                cursor: 'pointer',
+              }}
+            >
+              {category.title}
+            </div>
+          </SwiperSlide>
+        ))}
+      </Swiper>
     </div>
   );
 }
 
-export default Catogiries;
+export default CategoriesWithSwiper;
