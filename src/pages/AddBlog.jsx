@@ -1,10 +1,125 @@
 import { useState, useRef } from 'react';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import SuccessModal from '../components/SuccessModal';
+import { useForm } from 'react-hook-form';
+import Form from '../components/Form';
 
 const AddBlogs = () => {
   const [files, setFiles] = useState(null);
   const inputRef = useRef();
+
+  const [author, setAuthor] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+  const [title, setTitle] = useState('');
+  const [desc, setDesc] = useState('');
+
+  const [errorsAuthor, setErrorsAuthor] = useState({
+    minLength: false,
+    hasNoSpace: false,
+    isGeorgian: false,
+  });
+  const [errorTitle, setErrorTitle] = useState({
+    minLength: false,
+  });
+  const [errorDesc, setErrorDesc] = useState({
+    minLength: false,
+  });
+
+  const validateAuthor = (value) => {
+    const hasNoSpace = !value.includes(' ');
+    const isGeorgian = /^[ა-ჰ\s]+$/.test(value);
+    const isFourCharacters = value.length < 4;
+
+    setErrorsAuthor({
+      minLength: isFourCharacters,
+      hasNoSpace: hasNoSpace,
+      isGeorgian: !isGeorgian,
+    });
+
+    return !isFourCharacters && !hasNoSpace && isGeorgian;
+  };
+
+  const validateTitle = (value) => {
+    const isFourCharacters = value.length < 4;
+
+    setErrorTitle({
+      minLength: isFourCharacters,
+    });
+
+    return !isFourCharacters;
+  };
+
+  const validateDesc = (value) => {
+    const isFourCharacters = value.length < 4;
+
+    setErrorDesc({
+      minLength: isFourCharacters,
+    });
+
+    return !isFourCharacters;
+  };
+
+  const getClassName = (
+    errorConditionAuthor,
+    errorConditionTitle,
+    errorConditionDesc
+  ) => {
+    if (!submitted) {
+      return 'validate text-secondary';
+    } else if (
+      errorConditionAuthor ||
+      errorConditionTitle ||
+      errorConditionDesc
+    ) {
+      return 'validate text-danger';
+    } else if (
+      author &&
+      !errorsAuthor.minLength &&
+      !errorsAuthor.hasNoSpace &&
+      !errorsAuthor.isGeorgian
+    ) {
+      return 'success';
+    } else if (title && errorTitle.minLength) {
+      return 'success';
+    } else if (desc && errorDesc.minLength) {
+      return 'success';
+    }
+    return 'success';
+  };
+
+  const handleInputChange = (value) => {
+    setAuthor(value);
+    validateAuthor(value);
+    // setTitle(value);
+    // validateTitle(value);
+  };
+
+  const handleChangeTitle = (value) => {
+    setTitle(value);
+    validateTitle(value);
+  };
+
+  const handleChangeDesc = (value) => {
+    setDesc(value);
+    validateDesc(value);
+  };
+
+  const onSubmit = (e) => {
+    // e.preventDefault();
+    setSubmitted(true);
+
+    const isValid = validateAuthor(author);
+    const isValidTitle = validateTitle(title);
+    const isValidDesc = validateDesc(desc);
+
+    if (isValid && isValidTitle && isValidDesc) {
+      // Handle form submission - valid data
+      console.log('Form submitted:', author, title, desc);
+    } else {
+      // Handle form submission - invalid data
+      console.log('Invalid data');
+    }
+  };
 
   const handleDragOver = (event) => {
     event.preventDefault();
@@ -14,6 +129,12 @@ const AddBlogs = () => {
     event.preventDefault();
     setFiles(event.dataTransfer.files);
   };
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitted },
+  } = useForm();
 
   // send files to the server // learn from my other video
   const handleUpload = () => {
@@ -28,21 +149,20 @@ const AddBlogs = () => {
     // )
   };
 
-  if (files)
-    return (
-      <div className="uploads">
-        <ul>
-          {Array.from(files).map((file, idx) => (
-            <li key={idx}>{file.name}</li>
-          ))}
-        </ul>
-        <div className="actions">
-          <button onClick={() => setFiles(null)}>Cancel</button>
-          <button onClick={handleUpload}>Upload</button>
-        </div>
-      </div>
-    );
-
+  // if (files)
+  //   return (
+  //     <div className="uploads">
+  //       <ul>
+  //         {Array.from(files).map((file, idx) => (
+  //           <li key={idx}>{file.name}</li>
+  //         ))}
+  //       </ul>
+  //       <div className="actions">
+  //         <button onClick={() => setFiles(null)}>Cancel</button>
+  //         <button onClick={handleUpload}>Upload</button>
+  //       </div>
+  //     </div>
+  //   );
   return (
     <div
       className="d-flex justify-content-center w-100"
@@ -57,7 +177,7 @@ const AddBlogs = () => {
         >
           ბლოგის დამატება
         </h2>
-        <form>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <div className="border border-warning mt-2 ">
             <h5 style={{ fontWeight: 'bold' }} className="mb-2">
               ატვირთეთ ფოტო
@@ -96,7 +216,12 @@ const AddBlogs = () => {
                 <h5 className="mt-4">
                   ჩააგდეთ ფაილი აქ ან{' '}
                   <span
-                    style={{ fontWeight: 'bold', textDecoration: 'underline' }}
+                    style={{
+                      fontWeight: 'bold',
+                      textDecoration: 'underline',
+                      cursor: 'pointer',
+                    }}
+                    onClick={() => inputRef.current.click()}
                   >
                     აირჩიეთ ფაილი
                   </span>{' '}
@@ -107,55 +232,70 @@ const AddBlogs = () => {
           <div className=" d-flex gap-4 border border-warning mt-4">
             <div className="w-50 d-flex flex-column border border-primary ">
               <h5 style={{ fontWeight: 'bold' }}>ავტორი *</h5>
+
               <input
                 type="text"
-                placeholder="შეიყვანეთ ავტორი"
-                className="author form-control d-flex align-items-center rounded-3 "
+                placeholder="ავტორი"
+                className={
+                  (errorsAuthor.minLength && isSubmitted) ||
+                  (errorsAuthor.hasNoSpace && isSubmitted) ||
+                  (errorsAuthor.isGeorgian && isSubmitted)
+                    ? 'invalidInputs'
+                    : 'validInputs'
+                }
+                value={author}
+                onChange={(e) => handleInputChange(e.target.value)}
               />
-              <span className="validate">
-                {' '}
-                <i class="bi bi-dot"></i>მინიმუმ 4 სიმბოლო
+
+              <span className={getClassName(errorsAuthor.minLength)}>
+                <i className="bi bi-dot"></i> მინიმუმ 4 სიმბოლო
               </span>
-              <span className="validate">
-                {' '}
-                <i class="bi bi-dot"></i>მინიმუმ ორი სიტყვა
+
+              <span className={getClassName(errorsAuthor.hasNoSpace)}>
+                <i className="bi bi-dot"></i> მინიმუმ ორი სიტყვა
               </span>
-              <span className="validate">
-                {' '}
-                <i class="bi bi-dot"></i> მხოლოდ ქართული სიმბოლოები
+
+              <span className={getClassName(errorsAuthor.isGeorgian)}>
+                <i className="bi bi-dot"></i> მხოლოდ ქართული სიმბოლოები
               </span>
             </div>
             <div className="w-50 d-flex flex-column border border-primary ">
               <h5 style={{ fontWeight: 'bold' }}>სათაური *</h5>
               <input
                 type="text"
+                value={title}
                 placeholder="შეიყვანეთ სათაური"
-                className="title form-control d-flex align-items-center rounded-3 "
+                className={
+                  errorTitle.minLength ? 'invalidInputs' : 'validInputs'
+                }
+                onChange={(e) => handleChangeTitle(e.target.value)}
               />
-              <span className="validate">მინიმუმ 2 სიმბოლო</span>
+
+              <span className={getClassName(errorTitle?.minLength)}>
+                <i className="bi bi-dot"></i> მინიმუმ 4 სიმბოლო
+              </span>
             </div>
           </div>
           <div className="d-flex flex-column mt-4">
             <h5 style={{ fontWeight: 'bold' }}>აღწერა *</h5>
             <textarea
-              style={{ resize: 'none', border: ' 1px solid #E4E3EB;' }}
-              name=""
+              name="desc"
+              id="desc"
               placeholder="შეიყვანეთ აღწერა"
-              id=""
               cols="30"
               rows="10"
-              className="w-100 h-124 border rounded-4 p-2 form-control"
+              value={desc}
+              className={errorDesc.minLength ? 'invalidInputs' : 'validInputs'}
+              onChange={(e) => handleChangeDesc(e.target.value)}
             ></textarea>
-            <span className="validate">მინიმუმ 2 სიმბოლო</span>
+            <span className={getClassName(errorDesc?.minLength)}>
+              <i className="bi bi-dot"></i> მინიმუმ 4 სიმბოლო
+            </span>
           </div>
           <div className=" d-flex gap-4 border border-warning mt-4">
             <div className="w-50 d-flex flex-column border border-primary ">
               <h5 style={{ fontWeight: 'bold' }}>გამოქვეყნების თარიღი *</h5>
-              <input
-                type="date"
-                className="date form-control"
-                placeholder="12/12/23s"
-              />
+              <input type="date" className="date form-control" />
             </div>
             <div className="w-50 d-flex flex-column border border-primary ">
               <h5 style={{ fontWeight: 'bold' }}>კატეგორია *</h5>
@@ -171,12 +311,27 @@ const AddBlogs = () => {
               <h5 style={{ fontWeight: 'bold' }}>ელ-ფოსტა</h5>
               <input
                 type="email"
-                className="email p-2 form-control"
+                className={errors.email ? 'invalidInputs' : 'validInputs'}
                 placeholder="Example@redberry.ge"
+                {...register('email', {
+                  // required: 'მეილი აუცილებელია',
+                  pattern: {
+                    value: /^[a-zA-Z0-9._%+-]+@redberry\.ge$/,
+                    message: 'მეილი უნდა მთავრდებოდეს @redberry.ge-ით',
+                  },
+                })}
               />
+              {errors.email && (
+                <span className="validate text-danger fs-6">
+                  <img src="/assets/errorIcon.png" alt="error" /> &nbsp;
+                  {errors.email.message}
+                </span>
+              )}
             </div>
+
             <div className="w-100 d-flex justify-content-end ">
               <div className="w-50 d-flex flex-column border mt-4 ">
+                <button type="submit">submit </button>
                 <SuccessModal />
               </div>
             </div>

@@ -1,13 +1,16 @@
 import React from 'react';
 import Categories from '../components/Catogiries';
-import Header from '../components/Header';
+import Form from '../components/Form';
 
 function Home() {
   return (
-    <div className="border border-danger">
-      Hello
-      <Categories />
-    </div>
+    <>
+      <div className="border border-danger">
+        Hello
+        <Categories />
+      </div>
+      <Form />
+    </>
   );
 }
 
