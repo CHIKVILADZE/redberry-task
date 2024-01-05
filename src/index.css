@@ -11,6 +11,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #f3f2fa;
 }
 
 code {
@@ -23,6 +24,12 @@ code {
   margin-top: -20px;
   font-size: 24px;
   font-weight: 700;
+}
+
+#description {
+  height: 124px;
+  background-color: white;
+  resize: none;
 }
 
 .success {
@@ -43,6 +50,14 @@ code {
 
 h5 {
   font-size: 14px;
+}
+
+.custom-h1 {
+  color: #1a1a1f;
+  font-family: FiraGO;
+  font-size: 64px;
+  font-weight: 700;
+  line-height: 72px;
 }
 
 .validInputs

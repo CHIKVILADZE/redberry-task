@@ -1,25 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const CategoryInputTag = ({ selectedTags, setSelectedTags }) => {
-  const [categories, setCategories] = useState([]);
+const CategoryInputTag = ({ selectedTags, setSelectedTags, categories }) => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
 
-  useEffect(() => {
-    axios
-      .get('https://api.blog.redberryinternship.ge/api/categories')
-      .then((response) => {
-        setCategories(response.data.data);
-      })
-      .catch((error) => {
-        console.error('Error fetching categories:', error);
-      });
-  }, []);
-
   const handleTagSelect = (category) => {
-    if (!selectedTags.find((tag) => tag.id === category.id)) {
-      setSelectedTags([...selectedTags, category]);
-    }
+    const updatedTags = [...selectedTags, category];
+    setSelectedTags(updatedTags);
+    console.log('selected', updatedTags); // Use updatedTags directly for immediate logging
   };
 
   const handleRemoveTag = (tagId) => {
@@ -120,6 +108,9 @@ const CategoryInputTag = ({ selectedTags, setSelectedTags }) => {
                 position: 'absolute',
                 top: '50px',
                 left: '0',
+                display: 'flex',
+                flexDirection: 'row',
+                flexWrap: 'wrap',
                 width: '328px',
                 borderRadius: '12px',
                 border: '1px solid #E4E3EB',
@@ -130,13 +121,14 @@ const CategoryInputTag = ({ selectedTags, setSelectedTags }) => {
               }}
             >
               {categories.map((category) => (
-                <button
+                <div
                   key={category.id}
                   style={{
                     backgroundColor: category.background_color,
                     color: category.text_color,
                     padding: '5px 10px',
                     margin: '5px',
+                    textAlign: 'center',
                     borderRadius: '5px',
                     border: 'none',
                     cursor: 'pointer',
@@ -144,7 +136,7 @@ const CategoryInputTag = ({ selectedTags, setSelectedTags }) => {
                   onClick={() => handleTagSelect(category)}
                 >
                   {category.title}
-                </button>
+                </div>
               ))}
             </div>
           )}

@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import SuccessModal from '../components/SuccessModal';
 import { useForm } from 'react-hook-form';
@@ -15,7 +15,7 @@ const AddBlogs = () => {
   const [title, setTitle] = useState('');
   const [description, setDesc] = useState('');
   const [selectedTags, setSelectedTags] = useState([]);
-  const [fileUrl, setFileUrl] = useState(null);
+  const [categories, setCategories] = useState([]);
 
   const { token } = useContext(TokenContext);
 
@@ -30,6 +30,17 @@ const AddBlogs = () => {
   const [errorDesc, setErrorDesc] = useState({
     minLength: false,
   });
+
+  useEffect(() => {
+    axios
+      .get('https://api.blog.redberryinternship.ge/api/categories')
+      .then((response) => {
+        setCategories(response.data.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching categories:', error);
+      });
+  }, []);
 
   const validateAuthor = (value) => {
     const hasNoSpace = !value.includes(' ');
@@ -138,7 +149,7 @@ const AddBlogs = () => {
               accept: 'application/json',
               'Content-Type': 'multipart/form-data',
               Authorization: `Bearer ${token}`,
-              'access-control-allow-origin': '*', // Set the Authorization header with the retrieved token
+              'access-control-allow-origin': '*',
             },
           }
         );
@@ -268,6 +279,7 @@ const AddBlogs = () => {
               <CategoryInputTag
                 selectedTags={selectedTags}
                 setSelectedTags={setSelectedTags}
+                categories={categories}
               />
             </div>
           </div>
