@@ -1,7 +1,6 @@
 import React from 'react';
 import '../index.css';
 import Categories from '../components/Catogiries';
-import UploadImage from '../components/UploadImage';
 import Blogs from '../components/Blogs';
 
 function Home() {

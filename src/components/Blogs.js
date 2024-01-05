@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { TokenContext } from '../context/TokenProvider';
+import { Link } from 'react-router-dom';
 
 function Blogs() {
   const [blogs, setBlogs] = useState([]);
@@ -65,7 +66,12 @@ function Blogs() {
           />
           <p className="text-black fw-bold fs-5 mt-3 mb-2">{blog.author}</p>
           <span className="text-muted fs-6 "> {blog.formattedDate}</span>
-          <h2 className="text-black fw-bold fs-4 mt-2">{blog.title}</h2>
+          <h2 className="text-black fw-bold fs-4 mt-2">
+            {' '}
+            {blog.title.length > 60
+              ? blog.title.substring(0, 60) + '...'
+              : blog.title}
+          </h2>
           <div className="w-100 border border-primary d-flex flex-row gap-4 mt-2">
             {blog.categories.map((category) => (
               <div key={category.id}>
@@ -92,18 +98,22 @@ function Blogs() {
               ? blog.description.substring(0, 87) + '...'
               : blog.description}
           </p>
-          <p
-            style={{
-              color: '#5D37F3',
-              fontSize: '14px',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-              marginTop: '8px',
-            }}
+          <Link
+            to={`/blog/${blog.id}`}
+            style={{ textDecoration: 'none', color: '#5D37F3' }}
           >
-            სრულად ნახვა
-            <img src="/assets/Arrow.png" alt="Arrow" />
-          </p>
+            <p
+              style={{
+                fontSize: '14px',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                marginTop: '8px',
+              }}
+            >
+              სრულად ნახვა
+              <img src="/assets/Arrow.png" alt="Arrow" />
+            </p>
+          </Link>
         </div>
       ))}
     </>

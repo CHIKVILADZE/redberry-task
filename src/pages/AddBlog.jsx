@@ -291,12 +291,14 @@ const AddBlogs = () => {
                 className={errors.email ? 'invalidInputs' : 'validInputs'}
                 placeholder="Example@redberry.ge"
                 {...register('email', {
+                  required: 'მეილი სავალდებულოა',
                   pattern: {
                     value: /^[a-zA-Z0-9._%+-]+@redberry\.ge$/,
                     message: 'მეილი უნდა მთავრდებოდეს @redberry.ge-ით',
                   },
                 })}
               />
+
               {errors.email && (
                 <span className="validate text-danger fs-6">
                   <img src="/assets/errorIcon.png" alt="error" /> &nbsp;
