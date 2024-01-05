@@ -37,16 +37,8 @@ code {
 
 .swiper-slide {
   text-align: center;
-  font-size: 18px;
+  font-size: 16px;
   background: #fff;
-  border: 1px solid red;
-  width: auto;
-  /* Center slide text vertically */
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  justify-content: center;
-  align-items: center;
 }
 
 h5 {

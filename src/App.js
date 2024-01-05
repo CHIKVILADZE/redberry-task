@@ -6,7 +6,6 @@ import Header from './components/Header';
 import { TokenProvider } from './context/TokenProvider';
 import Home from './pages/Home'; // Import your Home component
 import AddBlog from './pages/AddBlog';
-import Form from './components/Form';
 
 function App() {
   return (
@@ -16,7 +15,6 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />{' '}
           <Route path="/addblog" element={<AddBlog />} />{' '}
-          <Route path="/form" element={<Form />} />{' '}
           {/* Add more routes for other pages */}
         </Routes>
       </BrowserRouter>

@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const TagInput = () => {
+const CategoryInputTag = ({ selectedTags, setSelectedTags }) => {
   const [categories, setCategories] = useState([]);
-  const [selectedTags, setSelectedTags] = useState([]);
   const [dropdownVisible, setDropdownVisible] = useState(false);
 
   useEffect(() => {
-    // Fetch categories from the API
     axios
       .get('https://api.blog.redberryinternship.ge/api/categories')
       .then((response) => {
@@ -36,9 +34,8 @@ const TagInput = () => {
   return (
     <div style={{ position: 'relative' }}>
       <div style={{ display: 'inline-block' }}>
-        <h3>Select Tags:</h3>
         <div style={{ position: 'relative', display: 'inline-block' }}>
-          {selectedTags.length === 0 && ( // Placeholder condition
+          {selectedTags.length === 0 && (
             <div
               style={{
                 color: 'gray',
@@ -53,7 +50,6 @@ const TagInput = () => {
             </div>
           )}
 
-          {/* Existing code for selected tags */}
           <div
             onClick={toggleDropdown}
             style={{
@@ -63,7 +59,7 @@ const TagInput = () => {
               paddingRight: '20px',
               border: '1px solid #E4E3EB',
               borderRight: 'none',
-              backgroundColor: '#F7F7FF',
+              backgroundColor: 'white',
               display: 'flex',
               alignItems: 'center',
               flexDirection: 'row',
@@ -158,4 +154,4 @@ const TagInput = () => {
   );
 };
 
-export default TagInput;
+export default CategoryInputTag;

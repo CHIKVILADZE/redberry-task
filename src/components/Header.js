@@ -5,7 +5,7 @@ import EmailModal from './EmailModal';
 
 function Header() {
   return (
-    <div>
+    <div className="d-flex align-items-center justify-content-between px-5  py-2">
       <div>
         {' '}
         <img src="/assets/logo.png" alt="logo" />

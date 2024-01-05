@@ -1,6 +1,7 @@
 import React from 'react';
 import Categories from '../components/Catogiries';
-import Form from '../components/Form';
+import UploadImage from '../components/UploadImage';
+import Blogs from '../components/Blogs';
 
 function Home() {
   return (
@@ -9,7 +10,7 @@ function Home() {
         Hello
         <Categories />
       </div>
-      <Form />
+      <Blogs />
     </>
   );
 }

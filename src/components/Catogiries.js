@@ -28,15 +28,9 @@ function CategoriesWithSwiper() {
     getCategories();
   }, []);
 
-  console.log('Categors', categories);
-
   return (
-    <div className="border border-primary" style={{ width: '90%' }}>
-      <Swiper
-        spaceBetween={10}
-        slidesPerView={6}
-        className="w-70 border border-primary"
-      >
+    <div className="" style={{ width: '90%' }}>
+      <Swiper spaceBetween={10} slidesPerView={6} className="w-70 ">
         {categories.map((category) => (
           <SwiperSlide key={category.id}>
             <div
@@ -46,8 +40,8 @@ function CategoriesWithSwiper() {
                 backgroundColor: `${category.background_color}33`,
                 border: 'none',
                 borderRadius: 30,
-                padding: '8px 16px',
-
+                padding: '5px 10px',
+                fontSize: '14px',
                 cursor: 'pointer',
               }}
             >

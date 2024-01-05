@@ -1,17 +1,23 @@
-import { useState, useRef } from 'react';
+import { useState, useContext } from 'react';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import SuccessModal from '../components/SuccessModal';
 import { useForm } from 'react-hook-form';
-import Form from '../components/Form';
+import CategoryInputTag from '../components/CategoryInputTag';
+import UploadImage from '../components/UploadImage';
+import axios from 'axios';
+import { TokenContext } from '../context/TokenProvider';
 
 const AddBlogs = () => {
-  const [files, setFiles] = useState(null);
-  const inputRef = useRef();
-
+  const [image, setImage] = useState(null);
+  const [fileName, setFileName] = useState('No selected file');
   const [author, setAuthor] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [title, setTitle] = useState('');
-  const [desc, setDesc] = useState('');
+  const [description, setDesc] = useState('');
+  const [selectedTags, setSelectedTags] = useState([]);
+  const [fileUrl, setFileUrl] = useState(null);
+
+  const { token } = useContext(TokenContext);
 
   const [errorsAuthor, setErrorsAuthor] = useState({
     minLength: false,
@@ -81,7 +87,7 @@ const AddBlogs = () => {
       return 'success';
     } else if (title && errorTitle.minLength) {
       return 'success';
-    } else if (desc && errorDesc.minLength) {
+    } else if (description && errorDesc.minLength) {
       return 'success';
     }
     return 'success';
@@ -90,8 +96,6 @@ const AddBlogs = () => {
   const handleInputChange = (value) => {
     setAuthor(value);
     validateAuthor(value);
-    // setTitle(value);
-    // validateTitle(value);
   };
 
   const handleChangeTitle = (value) => {
@@ -104,30 +108,62 @@ const AddBlogs = () => {
     validateDesc(value);
   };
 
-  const onSubmit = (e) => {
-    // e.preventDefault();
+  const onSubmit = async () => {
     setSubmitted(true);
 
     const isValid = validateAuthor(author);
     const isValidTitle = validateTitle(title);
-    const isValidDesc = validateDesc(desc);
+    const isValidDesc = validateDesc(description);
+    const categoryIds = selectedTags.map((tag) => tag.id);
 
     if (isValid && isValidTitle && isValidDesc) {
-      // Handle form submission - valid data
-      console.log('Form submitted:', author, title, desc);
+      try {
+        const formData = new FormData();
+        formData.append('image', image); // Append the file object directly
+        formData.append('author', author);
+        formData.append('title', title);
+        formData.append('description', description);
+        formData.append('publish_date', document.querySelector('.date').value);
+        formData.append('categories', JSON.stringify(categoryIds));
+        formData.append(
+          'email',
+          document.querySelector('input[type=email]').value
+        );
+
+        const response = await axios.post(
+          'https://api.blog.redberryinternship.ge/api/blogs',
+          formData,
+          {
+            headers: {
+              accept: 'application/json',
+              'Content-Type': 'multipart/form-data',
+              Authorization: `Bearer ${token}`,
+              'access-control-allow-origin': '*', // Set the Authorization header with the retrieved token
+            },
+          }
+        );
+
+        if (response.status === 204) {
+          console.log('formDataaa', formData);
+          console.log('Blog submitted successfully with status 204');
+          console.log('Hello', response);
+        } else if (response.status === 200) {
+          console.log('formDataaa', formData);
+          console.log('Blog submitted successfully with status 200');
+        } else {
+          console.log('Failed to submit blog:', response.statusText);
+          console.log('formDataaa', formData);
+          // Handle other status codes accordingly
+        }
+      } catch (error) {
+        console.error('Error submitting blog:', error);
+
+        // Handle error cases
+      }
     } else {
-      // Handle form submission - invalid data
       console.log('Invalid data');
+      // Handle invalid data cases
     }
-  };
-
-  const handleDragOver = (event) => {
-    event.preventDefault();
-  };
-
-  const handleDrop = (event) => {
-    event.preventDefault();
-    setFiles(event.dataTransfer.files);
   };
 
   const {
@@ -136,33 +172,6 @@ const AddBlogs = () => {
     formState: { errors, isSubmitted },
   } = useForm();
 
-  // send files to the server // learn from my other video
-  const handleUpload = () => {
-    const formData = new FormData();
-    formData.append('Files', files);
-    console.log(formData.getAll());
-    // fetch(
-    //   "link", {
-    //     method: "POST",
-    //     body: formData
-    //   }
-    // )
-  };
-
-  // if (files)
-  //   return (
-  //     <div className="uploads">
-  //       <ul>
-  //         {Array.from(files).map((file, idx) => (
-  //           <li key={idx}>{file.name}</li>
-  //         ))}
-  //       </ul>
-  //       <div className="actions">
-  //         <button onClick={() => setFiles(null)}>Cancel</button>
-  //         <button onClick={handleUpload}>Upload</button>
-  //       </div>
-  //     </div>
-  //   );
   return (
     <div
       className="d-flex justify-content-center w-100"
@@ -179,55 +188,12 @@ const AddBlogs = () => {
         </h2>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="border border-warning mt-2 ">
-            <h5 style={{ fontWeight: 'bold' }} className="mb-2">
-              ატვირთეთ ფოტო
-            </h5>
-            <div
-              style={{
-                border: '2px dashed #85858D',
-                height: '220px',
-              }}
-            >
-              <div
-                className="d-flex flex-column justify-content-center align-items-center  border p-4 rounded-4 h-100 "
-                style={{
-                  background: '#F4F3FF',
-                }}
-                onDragOver={handleDragOver}
-                onDrop={handleDrop}
-              >
-                <input
-                  type="file"
-                  multiple
-                  onChange={(event) => setFiles(event.target.files)}
-                  hidden
-                  accept="image/png, image/jpeg"
-                  ref={inputRef}
-                />
-                <button
-                  onClick={() => inputRef.current.click()}
-                  style={{
-                    border: 'none',
-                    background: '#F4F3FF',
-                  }}
-                >
-                  <img src="/assets/upload.png" alt="upload" />
-                </button>
-                <h5 className="mt-4">
-                  ჩააგდეთ ფაილი აქ ან{' '}
-                  <span
-                    style={{
-                      fontWeight: 'bold',
-                      textDecoration: 'underline',
-                      cursor: 'pointer',
-                    }}
-                    onClick={() => inputRef.current.click()}
-                  >
-                    აირჩიეთ ფაილი
-                  </span>{' '}
-                </h5>
-              </div>
-            </div>
+            <UploadImage
+              image={image}
+              setImage={setImage}
+              fileName={fileName}
+              setFileName={setFileName}
+            />
           </div>
           <div className=" d-flex gap-4 border border-warning mt-4">
             <div className="w-50 d-flex flex-column border border-primary ">
@@ -279,12 +245,12 @@ const AddBlogs = () => {
           <div className="d-flex flex-column mt-4">
             <h5 style={{ fontWeight: 'bold' }}>აღწერა *</h5>
             <textarea
-              name="desc"
-              id="desc"
+              name="description"
+              id="description"
               placeholder="შეიყვანეთ აღწერა"
               cols="30"
               rows="10"
-              value={desc}
+              value={description}
               className={errorDesc.minLength ? 'invalidInputs' : 'validInputs'}
               onChange={(e) => handleChangeDesc(e.target.value)}
             ></textarea>
@@ -299,10 +265,9 @@ const AddBlogs = () => {
             </div>
             <div className="w-50 d-flex flex-column border border-primary ">
               <h5 style={{ fontWeight: 'bold' }}>კატეგორია *</h5>
-              <input
-                type="text"
-                placeholder="აირჩიეთ კატეგორია"
-                className="category form-control"
+              <CategoryInputTag
+                selectedTags={selectedTags}
+                setSelectedTags={setSelectedTags}
               />
             </div>
           </div>
@@ -314,7 +279,6 @@ const AddBlogs = () => {
                 className={errors.email ? 'invalidInputs' : 'validInputs'}
                 placeholder="Example@redberry.ge"
                 {...register('email', {
-                  // required: 'მეილი აუცილებელია',
                   pattern: {
                     value: /^[a-zA-Z0-9._%+-]+@redberry\.ge$/,
                     message: 'მეილი უნდა მთავრდებოდეს @redberry.ge-ით',
