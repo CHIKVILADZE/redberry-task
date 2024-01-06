@@ -29,7 +29,7 @@ function CategoriesWithSwiper() {
   }, []);
 
   return (
-    <div className="mt-5" style={{ width: '70%', border: '2px solid red' }}>
+    <div className="mt-5" style={{ width: '70%' }}>
       <Swiper spaceBetween={10} slidesPerView={6} className="w-70 ">
         {categories.map((category) => (
           <SwiperSlide

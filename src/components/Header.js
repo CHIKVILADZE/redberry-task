@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
 
-import EmailModal from './EmailModal';
+import AuthModal from './Auth';
 
 function Header() {
   return (
@@ -12,7 +12,7 @@ function Header() {
       </div>
       <div>
         {' '}
-        <EmailModal />
+        <AuthModal />
       </div>
     </div>
   );

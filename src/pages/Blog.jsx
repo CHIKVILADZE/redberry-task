@@ -49,10 +49,7 @@ function Blog() {
       className="w-100 h-100 d-flex flex-column align-items-center"
       style={{ backgroundColor: '#F3F2FA' }}
     >
-      <div
-        className="d-flex flex-column border border-black"
-        style={{ width: '720px' }}
-      >
+      <div className="d-flex flex-column " style={{ width: '720px' }}>
         <img src={blog.image} alt={blog.title} width={720} height={328} />
         <p className="text-black fs-6 mt-4 mb-1">{blog.author}</p>
         <span>
@@ -82,7 +79,7 @@ function Blog() {
         <p className="text-black fs-5 mt-5">{blog.description}</p>
       </div>
       <div
-        className="w-100 border border-danger d-flex flex-row "
+        className="w-100  d-flex flex-row mb-5"
         style={{ paddingLeft: '76px', paddingRight: '76px', marginTop: '98px' }}
       >
         <Similars categoryIds={categoryIds} blogId={blog.id} />

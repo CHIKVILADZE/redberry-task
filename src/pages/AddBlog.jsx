@@ -6,6 +6,7 @@ import CategoryInputTag from '../components/CategoryInputTag';
 import UploadImage from '../components/UploadImage';
 import axios from 'axios';
 import { TokenContext } from '../context/TokenProvider';
+import { Link } from 'react-router-dom';
 
 const AddBlogs = () => {
   const [image, setImage] = useState(null);
@@ -16,6 +17,7 @@ const AddBlogs = () => {
   const [description, setDesc] = useState('');
   const [selectedTags, setSelectedTags] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const { token } = useContext(TokenContext);
 
@@ -154,13 +156,9 @@ const AddBlogs = () => {
           }
         );
 
-        if (response.status === 204) {
-          console.log('formDataaa', formData);
-          console.log('Blog submitted successfully with status 204');
-          console.log('Hello', response);
-        } else if (response.status === 200) {
-          console.log('formDataaa', formData);
-          console.log('Blog submitted successfully with status 200');
+        if (response.status === 204 || response.status === 200) {
+          console.log('Blog submitted successfully');
+          setShowSuccessModal(true);
         } else {
           console.log('Failed to submit blog:', response.statusText);
           console.log('formDataaa', formData);
@@ -188,7 +186,10 @@ const AddBlogs = () => {
       className="d-flex justify-content-center w-100"
       style={{ backgroundColor: '#F4F3FF' }}
     >
-      <div className="border border-black w-50 d-flex flex-column gap-3">
+      <div className=" w-50 d-flex flex-column gap-3 mt-5">
+        <Link to="/" style={{ position: 'absolute', left: 100 }}>
+          <img src="/assets/arr.png" alt="arr" />
+        </Link>
         <h2
           className="font"
           style={{
@@ -198,7 +199,7 @@ const AddBlogs = () => {
           ბლოგის დამატება
         </h2>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="border border-warning mt-2 ">
+          <div className="mt-2 ">
             <UploadImage
               image={image}
               setImage={setImage}
@@ -206,17 +207,17 @@ const AddBlogs = () => {
               setFileName={setFileName}
             />
           </div>
-          <div className=" d-flex gap-4 border border-warning mt-4">
-            <div className="w-50 d-flex flex-column border border-primary ">
+          <div className=" d-flex gap-4  mt-4">
+            <div className="w-50 d-flex flex-column ">
               <h5 style={{ fontWeight: 'bold' }}>ავტორი *</h5>
 
               <input
                 type="text"
                 placeholder="ავტორი"
                 className={
-                  (errorsAuthor.minLength && isSubmitted) ||
-                  (errorsAuthor.hasNoSpace && isSubmitted) ||
-                  (errorsAuthor.isGeorgian && isSubmitted)
+                  errorsAuthor.minLength ||
+                  errorsAuthor.hasNoSpace ||
+                  errorsAuthor.isGeorgian
                     ? 'invalidInputs'
                     : 'validInputs'
                 }
@@ -236,7 +237,7 @@ const AddBlogs = () => {
                 <i className="bi bi-dot"></i> მხოლოდ ქართული სიმბოლოები
               </span>
             </div>
-            <div className="w-50 d-flex flex-column border border-primary ">
+            <div className="w-50 d-flex flex-column  ">
               <h5 style={{ fontWeight: 'bold' }}>სათაური *</h5>
               <input
                 type="text"
@@ -269,12 +270,12 @@ const AddBlogs = () => {
               <i className="bi bi-dot"></i> მინიმუმ 4 სიმბოლო
             </span>
           </div>
-          <div className=" d-flex gap-4 border border-warning mt-4">
-            <div className="w-50 d-flex flex-column border border-primary ">
+          <div className=" d-flex gap-4  mt-4">
+            <div className="w-50 d-flex flex-column  ">
               <h5 style={{ fontWeight: 'bold' }}>გამოქვეყნების თარიღი *</h5>
               <input type="date" className="date form-control" />
             </div>
-            <div className="w-50 d-flex flex-column border border-primary ">
+            <div className="w-50 d-flex flex-column  ">
               <h5 style={{ fontWeight: 'bold' }}>კატეგორია *</h5>
               <CategoryInputTag
                 selectedTags={selectedTags}
@@ -284,14 +285,13 @@ const AddBlogs = () => {
             </div>
           </div>
           <div>
-            <div className="w-50 d-flex flex-column border mt-4">
+            <div className="w-50 d-flex flex-column mt-4">
               <h5 style={{ fontWeight: 'bold' }}>ელ-ფოსტა</h5>
               <input
                 type="email"
                 className={errors.email ? 'invalidInputs' : 'validInputs'}
                 placeholder="Example@redberry.ge"
                 {...register('email', {
-                  required: 'მეილი სავალდებულოა',
                   pattern: {
                     value: /^[a-zA-Z0-9._%+-]+@redberry\.ge$/,
                     message: 'მეილი უნდა მთავრდებოდეს @redberry.ge-ით',
@@ -309,8 +309,7 @@ const AddBlogs = () => {
 
             <div className="w-100 d-flex justify-content-end ">
               <div className="w-50 d-flex flex-column border mt-4 ">
-                <button type="submit">submit </button>
-                <SuccessModal />
+                <SuccessModal showSuccessModal={showSuccessModal} />
               </div>
             </div>
           </div>

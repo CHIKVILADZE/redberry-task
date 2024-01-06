@@ -53,7 +53,6 @@ function Blogs() {
           style={{
             width: '430px',
             height: '632px',
-            border: '1px solid black',
           }}
           className="d-flex flex-column mt-5"
         >
@@ -72,7 +71,7 @@ function Blogs() {
               ? blog.title.substring(0, 60) + '...'
               : blog.title}
           </h2>
-          <div className="w-100 border border-primary d-flex flex-row gap-4 mt-2">
+          <div className="w-100  d-flex flex-row gap-4 mt-2">
             {blog.categories.map((category) => (
               <div key={category.id}>
                 <button
