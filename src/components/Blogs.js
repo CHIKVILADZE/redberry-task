@@ -3,7 +3,7 @@ import axios from 'axios';
 import { TokenContext } from '../context/TokenProvider';
 import { Link } from 'react-router-dom';
 
-function Blogs() {
+function Blogs({ selectedCategories }) {
   const [blogs, setBlogs] = useState([]);
   const { token } = useContext(TokenContext);
 
@@ -16,34 +16,65 @@ function Blogs() {
   };
 
   useEffect(() => {
-    if (token) {
-      axios
-        .get('https://api.blog.redberryinternship.ge/api/blogs', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            accept: 'application/json',
-          },
-        })
-        .then((response) => {
+    const fetchBlogs = async () => {
+      try {
+        let response;
+        if (selectedCategories.length > 0) {
+          response = await axios.get(
+            'https://api.blog.redberryinternship.ge/api/blogs',
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                accept: 'application/json',
+              },
+            }
+          );
+
           if (Array.isArray(response.data.data)) {
-            const formattedBlogs = response.data.data.map((blog) => ({
+            const filteredBlogs = response.data.data.filter((blog) =>
+              blog.categories.some((category) =>
+                selectedCategories.includes(category.id)
+              )
+            );
+
+            const formattedBlogs = filteredBlogs.map((blog) => ({
               ...blog,
-              formattedDate: formatDate(blog.publish_date), // Format date here
+              formattedDate: formatDate(blog.publish_date),
             }));
+
             setBlogs(formattedBlogs);
-            console.log('response', response);
           } else {
             console.error('Invalid data format for blogs:', response.data);
           }
-        })
-        .catch((error) => {
-          console.error('Error fetching blogs:', error);
-        });
-    }
-  }, [token]); // Execute when the token changes
+        } else {
+          response = await axios.get(
+            'https://api.blog.redberryinternship.ge/api/blogs',
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                accept: 'application/json',
+              },
+            }
+          );
 
-  console.log('Blogs:', blogs);
-  console.log(token);
+          if (Array.isArray(response.data.data)) {
+            const formattedBlogs = response.data.data.map((blog) => ({
+              ...blog,
+              formattedDate: formatDate(blog.publish_date),
+            }));
+
+            setBlogs(formattedBlogs);
+          } else {
+            console.error('Invalid data format for blogs:', response.data);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching blogs:', error);
+      }
+    };
+
+    fetchBlogs();
+  }, [selectedCategories, token]);
 
   return (
     <>

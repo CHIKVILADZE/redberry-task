@@ -4,7 +4,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import '../index.css';
 
-function CategoriesWithSwiper() {
+function CategoriesWithSwiper({ onCategorySelect, selectedCategories }) {
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
@@ -34,6 +34,7 @@ function CategoriesWithSwiper() {
         {categories.map((category) => (
           <SwiperSlide
             key={category.id}
+            onClick={() => onCategorySelect([category.id])} // Pass selected category ID(s)
             style={{
               backgroundColor: '#F3F2FA',
             }}
@@ -43,11 +44,13 @@ function CategoriesWithSwiper() {
                 width: '90%',
                 color: category.background_color,
                 backgroundColor: `${category.background_color}33`,
-                border: 'none',
                 borderRadius: 30,
                 padding: '5px 10px',
                 fontSize: '12px',
                 cursor: 'pointer',
+                border: selectedCategories.includes(category.id)
+                  ? '1px solid black'
+                  : 'none',
               }}
             >
               {category.title}

@@ -1,9 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import '../index.css';
-import Categories from '../components/Catogiries';
 import Blogs from '../components/Blogs';
+import CategoriesWithSwiper from '../components/Catogiries';
 
 function Home() {
+  const [selectedCategories, setSelectedCategories] = useState([]);
+
+  const handleCategorySelect = (categoryIds) => {
+    setSelectedCategories([...selectedCategories, ...categoryIds]);
+  };
+
   return (
     <>
       <div
@@ -17,12 +23,15 @@ function Home() {
           <h1 className="fw-bold custom-h1">ბლოგი</h1>
           <img src="/assets/blogs.png" alt="blogs" />
         </div>
-        <Categories />
+        <CategoriesWithSwiper
+          onCategorySelect={handleCategorySelect}
+          selectedCategories={selectedCategories}
+        />
         <div
           className="w-100  mt-5  d-flex flex-row flex-wrap  justify-content-start"
           style={{ paddingLeft: 89, paddingRight: 76, gap: '100px' }}
         >
-          <Blogs />
+          <Blogs selectedCategories={selectedCategories} />
         </div>
       </div>
     </>
